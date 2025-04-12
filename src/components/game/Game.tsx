@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Bird from './Bird';
@@ -8,9 +9,10 @@ import GameControls from './GameControls';
 import GameOverMenu from './GameOverMenu';
 import StartMenu from './StartMenu';
 import { useToast } from '@/components/ui/use-toast';
+import { playSound } from '@/utils/sounds';
 
 // Game constants
-const GRAVITY = 0.6;  // Reduced from 0.6 to make the bird fall slower
+const GRAVITY = 0.4;  // Reduced from 0.6 to make the bird fall slower
 const JUMP_FORCE = -14; // Reduced from -10 to make jumps less extreme
 const BIRD_WIDTH = 34;
 const BIRD_HEIGHT = 34;
@@ -201,7 +203,7 @@ const Game: React.FC = () => {
         }
         
         if (!isMuted) {
-          playSound('point');
+          handleOnplaySound('point');
         }
       }
     });
@@ -257,7 +259,7 @@ const Game: React.FC = () => {
     // Remove the high score check from the collision handler
     if (checkCollision()) {
       if (!isMuted) {
-        playSound('hit');
+        handleOnplaySound('hit');
       }
       
       setGameState(GameState.GAME_OVER);
@@ -294,7 +296,7 @@ const Game: React.FC = () => {
       setBirdVelocity(newVelocity);
       
       if (!isMuted) {
-        playSound('wing');
+        handleOnplaySound('wing');
       }
     }
   }, [gameState, isMuted, birdVelocity]);
@@ -326,14 +328,20 @@ const Game: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState, handleJump]);
 
   // Play sounds
-  const playSound = (sound: 'wing' | 'hit' | 'point') => {
-    // We'll implement this when we add audio files
-    // For now, let's just console.log
-    console.log(`Playing sound: ${sound}`);
-  };
+  // Replace the existing handleOnplaySound function with:
+  const handleOnplaySound = (sound: 'wing' | 'hit' | 'point') => {
+  if (!isMuted) {
+    try {
+      playSound(sound);
+    } catch (error) {
+      console.error('Error playing sound:', error);
+    }
+  }
+};
 
   // Game control functions
   const startGame = () => {
