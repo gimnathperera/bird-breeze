@@ -1,7 +1,5 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Volume2, VolumeX, Pause, Play, RotateCcw } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Volume2, VolumeX, Pause, Play, RotateCcw } from "lucide-react";
 
 interface GameControlsProps {
   isPlaying: boolean;
@@ -33,7 +31,7 @@ const GameControls: React.FC<GameControlsProps> = ({
           <Play className="h-5 w-5" />
         )}
       </Button>
-      
+
       <Button
         variant="outline"
         size="icon"
@@ -43,7 +41,7 @@ const GameControls: React.FC<GameControlsProps> = ({
       >
         <RotateCcw className="h-5 w-5" />
       </Button>
-      
+
       <Button
         variant="outline"
         size="icon"

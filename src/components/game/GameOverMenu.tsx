@@ -1,8 +1,6 @@
-
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { motion } from 'framer-motion';
-import { Trophy } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
+import { Trophy } from "lucide-react";
 
 interface GameOverMenuProps {
   score: number;
@@ -25,11 +23,11 @@ const GameOverMenu: React.FC<GameOverMenuProps> = ({
     >
       <div className="bg-black/60 backdrop-blur-sm p-8 rounded-xl border-2 border-white/20 text-center max-w-xs mx-auto">
         <h2 className="text-3xl font-bold text-white mb-2">Game Over</h2>
-        
+
         <div className="mb-6">
           <p className="text-white mb-1">Score: {score}</p>
           <p className="text-white">High Score: {highScore}</p>
-          
+
           {isNewHighScore && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -40,10 +38,10 @@ const GameOverMenu: React.FC<GameOverMenuProps> = ({
               <motion.div
                 initial={{ rotate: -15, scale: 0 }}
                 animate={{ rotate: 0, scale: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
                   stiffness: 260,
-                  damping: 20
+                  damping: 20,
                 }}
               >
                 <Trophy className="w-12 h-12 text-yellow-300" />
@@ -59,7 +57,7 @@ const GameOverMenu: React.FC<GameOverMenuProps> = ({
             </motion.div>
           )}
         </div>
-        
+
         <Button
           className="w-full bg-white/20 backdrop-blur-sm border-white/40 text-white hover:bg-white/30 text-lg py-6"
           onClick={onRestart}

@@ -1,18 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import Bird from './Bird';
-import Pipe from './Pipe';
-import Ground from './Ground';
-import Score from './Score';
-import GameControls from './GameControls';
-import GameOverMenu from './GameOverMenu';
-import StartMenu from './StartMenu';
-import { useToast } from '@/components/ui/use-toast';
-import { playSound } from '@/utils/sounds';
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import Bird from "./Bird";
+import Pipe from "./Pipe";
+import Ground from "./Ground";
+import Score from "./Score";
+import GameControls from "./GameControls";
+import GameOverMenu from "./GameOverMenu";
+import StartMenu from "./StartMenu";
+import { useToast } from "@/components/ui/use-toast";
+import { playSound } from "@/utils/sounds";
 
 // Game constants
-const GRAVITY = 0.4;  // Reduced from 0.6 to make the bird fall slower
+const GRAVITY = 0.4; // Reduced from 0.6 to make the bird fall slower
 const JUMP_FORCE = -14; // Reduced from -10 to make jumps less extreme
 const BIRD_WIDTH = 34;
 const BIRD_HEIGHT = 34;
@@ -25,7 +25,7 @@ enum GameState {
   READY,
   PLAYING,
   GAME_OVER,
-  PAUSED
+  PAUSED,
 }
 
 interface PipeObject {
@@ -35,10 +35,12 @@ interface PipeObject {
 }
 
 const generatePipe = (canvasWidth: number) => {
-  const minHeight = 80;  // Increased from 50 to make lower pipes less tall
+  const minHeight = 80; // Increased from 50 to make lower pipes less tall
   const maxHeight = 270; // Reduced from 300 to make upper pipes less tall
-  const height = Math.floor(Math.random() * (maxHeight - minHeight) + minHeight);
-  
+  const height = Math.floor(
+    Math.random() * (maxHeight - minHeight) + minHeight
+  );
+
   return {
     id: Date.now(),
     x: canvasWidth,
@@ -61,7 +63,7 @@ const Game: React.FC = () => {
   const [highScore, setHighScore] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isNewHighScore, setIsNewHighScore] = useState(false);
-  
+
   const frameRef = useRef<number>(0);
   const scoreRef = useRef(score);
   const passedPipeRef = useRef<Record<number, boolean>>({});
@@ -81,7 +83,7 @@ const Game: React.FC = () => {
       });
 
       // Load high score from localStorage
-      const savedHighScore = localStorage.getItem('flappyHighScore');
+      const savedHighScore = localStorage.getItem("flappyHighScore");
       if (savedHighScore) {
         setHighScore(parseInt(savedHighScore, 10));
       }
@@ -96,8 +98,8 @@ const Game: React.FC = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Update score ref when score changes
@@ -107,7 +109,7 @@ const Game: React.FC = () => {
 
   // Save high score
   useEffect(() => {
-    localStorage.setItem('flappyHighScore', highScore.toString());
+    localStorage.setItem("flappyHighScore", highScore.toString());
   }, [highScore]);
 
   // Handle collision detection
@@ -116,14 +118,14 @@ const Game: React.FC = () => {
 
     const birdRect = birdRef.current.getBoundingClientRect();
     const canvasRect = canvasRef.current.getBoundingClientRect();
-    
+
     // Debug collision detection
-    console.log('Bird position checking:', {
+    console.log("Bird position checking:", {
       birdTop: birdRect.top - canvasRect.top,
       birdBottom: birdRect.top - canvasRect.top + BIRD_HEIGHT,
-      groundTop: canvasRect.height - GROUND_HEIGHT
+      groundTop: canvasRect.height - GROUND_HEIGHT,
     });
-    
+
     // Bird dimensions and position
     const birdLeft = birdRect.left - canvasRect.left;
     const birdRight = birdLeft + BIRD_WIDTH;
@@ -132,15 +134,15 @@ const Game: React.FC = () => {
 
     // Check ground collision
     const groundTop = canvasRect.height - GROUND_HEIGHT;
-    
+
     if (birdBottom >= groundTop) {
-      console.log('Ground collision detected');
+      console.log("Ground collision detected");
       return true;
     }
 
     // Check ceiling collision - add a small buffer at the top (5px)
     if (birdTop <= 5) {
-      console.log('Ceiling collision detected');
+      console.log("Ceiling collision detected");
       return true;
     }
 
@@ -154,20 +156,20 @@ const Game: React.FC = () => {
       if (birdRight >= pipeLeft + 5 && birdLeft <= pipeRight - 5) {
         const topPipeBottom = pipe.height;
         const bottomPipeTop = pipe.height + PIPE_GAP;
-        
+
         // Debug pipe collision check
-        console.log('Pipe collision check:', {
+        console.log("Pipe collision check:", {
           pipe,
           birdTop,
           birdBottom,
           topPipeBottom,
           bottomPipeTop,
-          isColliding: (birdTop <= topPipeBottom || birdBottom >= bottomPipeTop)
+          isColliding: birdTop <= topPipeBottom || birdBottom >= bottomPipeTop,
         });
-        
+
         // Make collision detection slightly more forgiving with small buffer
         if (birdTop <= topPipeBottom - 2 || birdBottom >= bottomPipeTop + 2) {
-          console.log('Pipe collision detected');
+          console.log("Pipe collision detected");
           return true;
         }
       }
@@ -182,16 +184,16 @@ const Game: React.FC = () => {
 
     const birdRect = birdRef.current.getBoundingClientRect();
     const canvasRect = canvasRef.current.getBoundingClientRect();
-    const birdCenter = birdRect.left - canvasRect.left + (BIRD_WIDTH / 2);
+    const birdCenter = birdRect.left - canvasRect.left + BIRD_WIDTH / 2;
 
-    pipes.forEach(pipe => {
+    pipes.forEach((pipe) => {
       const pipeRight = pipe.x + PIPE_WIDTH;
-      
+
       if (birdCenter > pipeRight && !passedPipeRef.current[pipe.id]) {
         passedPipeRef.current[pipe.id] = true;
         const newScore = scoreRef.current + 1;
         setScore(newScore);
-        
+
         // Check for new high score immediately
         if (newScore > highScore && !isNewHighScore) {
           setIsNewHighScore(true);
@@ -201,9 +203,9 @@ const Game: React.FC = () => {
             variant: "default",
           });
         }
-        
+
         if (!isMuted) {
-          handleOnplaySound('point');
+          handleOnplaySound("point");
         }
       }
     });
@@ -215,13 +217,13 @@ const Game: React.FC = () => {
     if (gameStateRef.current !== GameState.PLAYING) return;
 
     // Update bird position based on velocity
-    setBirdPosition(prevPosition => {
+    setBirdPosition((prevPosition) => {
       const newPosition = prevPosition + birdVelocity;
       return newPosition;
     });
 
     // Update bird velocity with gravity
-    setBirdVelocity(prevVelocity => prevVelocity + GRAVITY);
+    setBirdVelocity((prevVelocity) => prevVelocity + GRAVITY);
 
     // Update bird rotation based on velocity
     setBirdRotation(() => {
@@ -231,22 +233,25 @@ const Game: React.FC = () => {
     });
 
     // Move pipes to the left
-    setPipes(prevPipes => {
+    setPipes((prevPipes) => {
       return prevPipes
-        .map(pipe => ({
+        .map((pipe) => ({
           ...pipe,
-          x: pipe.x - GAME_SPEED
+          x: pipe.x - GAME_SPEED,
         }))
-        .filter(pipe => pipe.x > -PIPE_WIDTH); // Remove pipes that are off screen
+        .filter((pipe) => pipe.x > -PIPE_WIDTH); // Remove pipes that are off screen
     });
 
     // Add new pipes with a slightly larger distance between them
-    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvasSize.width - 350) {
-      setPipes(prevPipes => [...prevPipes, generatePipe(canvasSize.width)]);
+    if (
+      pipes.length === 0 ||
+      pipes[pipes.length - 1].x < canvasSize.width - 350
+    ) {
+      setPipes((prevPipes) => [...prevPipes, generatePipe(canvasSize.width)]);
     }
 
     // Move ground
-    setGroundPosition(prevPos => {
+    setGroundPosition((prevPos) => {
       const newPos = prevPos - GAME_SPEED;
       // Reset ground position when it's moved enough to create a seamless loop
       return newPos <= -1000 ? 0 : newPos;
@@ -259,29 +264,38 @@ const Game: React.FC = () => {
     // Remove the high score check from the collision handler
     if (checkCollision()) {
       if (!isMuted) {
-        handleOnplaySound('hit');
+        handleOnplaySound("hit");
       }
-      
+
       setGameState(GameState.GAME_OVER);
-      
+
       // Update the final high score
       if (scoreRef.current > highScore) {
         setHighScore(scoreRef.current);
       }
-      
+
       return;
     }
 
     // Continue the game loop
     frameRef.current = requestAnimationFrame(gameLoop);
-  }, [gameState, pipes, canvasSize.width, checkCollision, checkPipePassed, highScore, isMuted, toast]);
+  }, [
+    gameState,
+    pipes,
+    canvasSize.width,
+    checkCollision,
+    checkPipePassed,
+    highScore,
+    isMuted,
+    toast,
+  ]);
 
   // Start the game loop when playing
   useEffect(() => {
     if (gameState === GameState.PLAYING) {
       frameRef.current = requestAnimationFrame(gameLoop);
     }
-    
+
     return () => {
       cancelAnimationFrame(frameRef.current);
     };
@@ -294,9 +308,9 @@ const Game: React.FC = () => {
       const currentVelocity = birdVelocity;
       const newVelocity = Math.max(JUMP_FORCE, currentVelocity + JUMP_FORCE);
       setBirdVelocity(newVelocity);
-      
+
       if (!isMuted) {
-        handleOnplaySound('wing');
+        handleOnplaySound("wing");
       }
     }
   }, [gameState, isMuted, birdVelocity]);
@@ -304,7 +318,7 @@ const Game: React.FC = () => {
   // Handle keyboard events
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === 'Space' || e.code === 'ArrowUp') {
+      if (e.code === "Space" || e.code === "ArrowUp") {
         if (gameState === GameState.READY) {
           startGame();
         } else if (gameState === GameState.PLAYING) {
@@ -316,8 +330,8 @@ const Game: React.FC = () => {
           setGameState(GameState.PLAYING);
         }
       }
-      
-      if (e.code === 'Escape') {
+
+      if (e.code === "Escape") {
         if (gameState === GameState.PLAYING) {
           setGameState(GameState.PAUSED);
         } else if (gameState === GameState.PAUSED) {
@@ -326,22 +340,21 @@ const Game: React.FC = () => {
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [gameState, handleJump]);
 
   // Play sounds
   // Replace the existing handleOnplaySound function with:
-  const handleOnplaySound = (sound: 'wing' | 'hit' | 'point') => {
-  if (!isMuted) {
-    try {
-      playSound(sound);
-    } catch (error) {
-      console.error('Error playing sound:', error);
+  const handleOnplaySound = (sound: "wing" | "hit" | "point") => {
+    if (!isMuted) {
+      try {
+        playSound(sound);
+      } catch (error) {
+        console.error("Error playing sound:", error);
+      }
     }
-  }
-};
+  };
 
   // Game control functions
   const startGame = () => {
@@ -368,66 +381,83 @@ const Game: React.FC = () => {
   };
 
   const toggleMute = () => {
-    setIsMuted(prev => !prev);
+    setIsMuted((prev) => !prev);
   };
 
   // UI Rendering
   return (
     <div className="w-full h-full flex flex-col items-center justify-center bg-gray-900">
-      <div 
+      <div
         ref={canvasRef}
         className="relative w-full h-full aspect-[3/4] sm:aspect-[9/16] overflow-hidden bg-gradient-to-b from-game-sky to-game-skyDark rounded-lg shadow-xl"
         onClick={gameState === GameState.READY ? startGame : handleJump}
       >
         {/* Game objects */}
-        <Bird 
+        <Bird
           ref={birdRef}
-          rotation={birdRotation} 
+          rotation={birdRotation}
           isFlying={gameState === GameState.PLAYING}
           style={{ top: `${birdPosition}px` }}
         />
-        
-        {pipes.map(pipe => (
+
+        {pipes.map((pipe) => (
           <React.Fragment key={pipe.id}>
             <Pipe height={pipe.height} position={pipe.x} isTop />
-            <Pipe height={canvasSize.height - pipe.height - PIPE_GAP - GROUND_HEIGHT} position={pipe.x} />
+            <Pipe
+              height={
+                canvasSize.height - pipe.height - PIPE_GAP - GROUND_HEIGHT
+              }
+              position={pipe.x}
+            />
           </React.Fragment>
         ))}
-        
+
         <Ground position={groundPosition} />
-        
+
         {/* UI Elements */}
-        {gameState === GameState.PLAYING && <Score score={score} highScore={highScore} className="absolute top-8 left-0 right-0" />}
-        
+        {gameState === GameState.PLAYING && (
+          <Score
+            score={score}
+            highScore={highScore}
+            className="absolute top-8 left-0 right-0"
+          />
+        )}
+
         <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-          <GameControls 
-            isPlaying={gameState === GameState.PLAYING} 
+          <GameControls
+            isPlaying={gameState === GameState.PLAYING}
             isMuted={isMuted}
             onTogglePlay={togglePause}
             onToggleMute={toggleMute}
             onRestart={restartGame}
           />
         </div>
-        
+
         {/* Game state menus */}
         {gameState === GameState.READY && <StartMenu onStart={startGame} />}
-        
-        {gameState === GameState.GAME_OVER && 
-          <GameOverMenu 
-            score={score} 
-            highScore={highScore} 
-            onRestart={restartGame} 
+
+        {gameState === GameState.GAME_OVER && (
+          <GameOverMenu
+            score={score}
+            highScore={highScore}
+            onRestart={restartGame}
             isNewHighScore={isNewHighScore}
           />
-        }
-        
+        )}
+
         {gameState === GameState.PAUSED && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-black/60 backdrop-blur-sm p-8 rounded-xl border-2 border-white/20 text-center">
-              <h2 className="text-3xl font-bold text-white text-shadow mb-4">Paused</h2>
+              <h2 className="text-3xl font-bold text-white text-shadow mb-4">
+                Paused
+              </h2>
               <div className="space-y-2">
-                <p className="text-white text-sm">Press Space or ESC to resume</p>
-                <p className="text-white text-xs opacity-70">Current Score: {score}</p>
+                <p className="text-white text-sm">
+                  Press Space or ESC to resume
+                </p>
+                <p className="text-white text-xs opacity-70">
+                  Current Score: {score}
+                </p>
               </div>
             </div>
           </div>

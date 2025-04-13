@@ -1,8 +1,6 @@
-
-import React from 'react';
-import { cn } from '@/lib/utils';
-import { Trophy } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { cn } from "@/lib/utils";
+import { Trophy } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface ScoreProps {
   score: number;
@@ -11,21 +9,28 @@ interface ScoreProps {
   className?: string;
 }
 
-const Score: React.FC<ScoreProps> = ({ score, highScore, isNewHighScore = false, className }) => {
+const Score: React.FC<ScoreProps> = ({
+  score,
+  highScore,
+  isNewHighScore = false,
+  className,
+}) => {
   return (
     <div className={cn("flex flex-col items-center", className)}>
       <div className="text-5xl font-bold text-white text-shadow">{score}</div>
-      <div className="text-sm text-white text-shadow">High Score: {highScore}</div>
-      
+      <div className="text-sm text-white text-shadow">
+        High Score: {highScore}
+      </div>
+
       {isNewHighScore && (
-        <motion.div 
+        <motion.div
           initial={{ scale: 0, rotate: -20 }}
           animate={{ scale: 1.2, rotate: 0 }}
-          transition={{ 
+          transition={{
             type: "spring",
             stiffness: 260,
             damping: 20,
-            duration: 0.6 
+            duration: 0.6,
           }}
           className="absolute top-20 flex flex-col items-center"
         >

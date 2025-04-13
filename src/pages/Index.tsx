@@ -1,6 +1,4 @@
-
-import React from 'react';
-import Game from '@/components/game/Game';
+import Game from "@/components/game/Game";
 
 const Index = () => {
   return (
