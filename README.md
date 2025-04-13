@@ -1,6 +1,7 @@
 # Bird Breeze 🐦 
 
 A powerful Chrome extension that enhances your Twitter/X experience with AI-powered features and modern UI improvements.
+![bird-breeze](https://github.com/user-attachments/assets/f48c1a43-e12e-4c5e-a7f7-68d4153bed23)
 
 ## Features
 
